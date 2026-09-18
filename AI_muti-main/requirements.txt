@@ -1,0 +1,41 @@
+# ============================================================
+# requirements.txt — IDSS Backend Pipeline (Minimal)
+# Chỉ giữ các package thực sự cần thiết.
+# Tổng dung lượng cài: ~350MB (thay vì ~2GB trước đây).
+# ============================================================
+
+# --- Core data processing ---
+pandas>=2.1.0,<2.3
+numpy>=1.26.0,<2.0
+
+# --- Vector DB (offline FAISS, no GPU needed) ---
+# Chỉ dùng faiss-cpu để tránh cài CUDA / torch
+faiss-cpu>=1.7.4
+
+# --- Web dashboard (optional, chỉ cần khi chạy UI) ---
+streamlit>=1.29.0,<1.35
+plotly>=5.18.0,<6.0
+
+# --- Environment config ---
+python-dotenv>=1.0.0,<2.0
+
+# --- Testing (moved to requirements-dev.txt) ---
+# pytest và pytest-cov chỉ cần khi develop/test, không cần trong production image
+
+# --- Code quality (dev only, bỏ nếu deploy prod) ---
+# black>=23.0
+# flake8>=6.0
+
+# ============================================================
+# Packages ĐÃ XÓA (không cần cho pipeline này):
+#   langchain, openai, llama-index  → dùng rule-based engine
+#   sentence-transformers           → dùng offline n-gram hash
+#   scikit-learn, statsmodels, tsfresh → không dùng trong pipeline
+#   slack-sdk, slack-bolt           → không có Slack integration
+#   psycopg2, sqlalchemy            → không dùng SQL DB
+#   fastapi, uvicorn, pydantic      → không có REST API (chỉ Streamlit)
+#   aiohttp                         → không có async requests
+#   jupyter, jupyterlab             → dev tool, optional
+#   python-json-logger, structlog   → thay bằng built-in json
+#   scipy                           → không dùng trực tiếp
+# ============================================================

@@ -1,0 +1,39 @@
+# IDSS — docker-compose
+services:
+  dashboard:
+    build: .
+    command: streamlit run web_dashboard/app.py --server.port=8501 --server.address=0.0.0.0
+    container_name: idss-dashboard
+    depends_on:
+    - pipeline
+    environment:
+    - PYTHONUNBUFFERED=1
+    ports:
+    - 8501:8501
+    volumes:
+    - ./data:/app/data
+    - ./logs:/app/logs
+  pipeline:
+    build: .
+    command: python main_pipeline.py
+    container_name: idss-pipeline
+    environment:
+    - PYTHONUNBUFFERED=1
+    volumes:
+    - ./data:/app/data
+    - ./logs:/app/logs
+  slack-bot:
+    build: .
+    command: python src/integrations/slack_bot.py
+    container_name: idss-slack-bot
+    environment:
+    - PYTHONUNBUFFERED=1
+    - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+    - SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET}
+    - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
+    profiles:
+    - slack
+    volumes:
+    - ./data:/app/data
+    - ./logs:/app/logs
+version: '3.9'
